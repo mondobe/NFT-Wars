@@ -23,6 +23,11 @@ public class CharMove : MonoBehaviour
         moveAxis = ctx.ReadValue<Vector2>() * moveSpeed;
     }
 
+    public void OnLook(InputAction.CallbackContext ctx)
+    {
+        DrawTexture.MoveCursor(ctx.ReadValue<Vector2>());
+    }
+
     void Update()
     {
         if(moveAxis != Vector2.zero)
