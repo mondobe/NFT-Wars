@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 public class DrawTexture : MonoBehaviour
@@ -13,6 +14,7 @@ public class DrawTexture : MonoBehaviour
     public static readonly Vector2Int size = new Vector2Int(200, 200);
     public float myCursorMoveSpeed;
     public static float cursorMoveSpeed;
+    public static bool drawPressed = false;
 
     Color[] Mat2List(Color[,] matrix)
     {
@@ -23,13 +25,22 @@ public class DrawTexture : MonoBehaviour
         return toRet;
     }
 
+    public void OnFire(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+            drawPressed = true;
+        if (ctx.canceled)
+            drawPressed = false;
+    }
+
     // Start is called before the first frame update
     void Awake()
     {
         cursorMoveSpeed = myCursorMoveSpeed;
         Cursor.lockState = CursorLockMode.Locked;
         floatCursor = new Vector2(size.x / 2, size.y / 2);
-        debug = new Texture2D(size.x, size.y, UnityEngine.TextureFormat.RGBA32, true, false);
+        debug = new Texture2D(size.x, size.y, TextureFormat.RGBA32, false);
+        debug.filterMode = FilterMode.Point;
         baseMatrix = new Color[size.x, size.y];
         colorMatrix = new Color[size.x, size.y];
         for (int i = 0; i < size.x; i++)
@@ -43,12 +54,50 @@ public class DrawTexture : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        debug.SetPixels(Mat2List(colorMatrix));
-        debug.Apply();
-        //Vector2Int randVec = new Vector2Int(Random.Range(0, size.x), Random.Range(0, size.y));
-        DrawPixelAtCursor(ref colorMatrix, Color.red);
-        Debug.Log("Cursor position is " + cursor + ", floatCursor: " + floatCursor);
+        //reset textures
+        ResetColorMatrix();
+
+        //set cursor position
+        SetCursorPos();
+
+        //draw at cursor
+        DrawCursor();
+        DrawCursorStroke(drawPressed);
+
+        //draw the pixels
+        SetTexture(ref debug);
+    }
+
+    void ResetColorMatrix()
+    {
+        colorMatrix = (Color[,])baseMatrix.Clone();
+    }
+
+    void SetCursorPos()
+    {
         cursor = RoundVec2(floatCursor);
+        Debug.Log("Cursor position is " + cursor + ", floatCursor: " + floatCursor + ", pressed: " + drawPressed);
+    }
+
+    void DrawCursor()
+    {
+        DrawPixelAtCursor(ref colorMatrix, Color.red);
+        DrawPixelAtCursor(ref colorMatrix, Color.red, 1);
+        DrawPixelAtCursor(ref colorMatrix, Color.red, -1);
+        DrawPixelAtCursor(ref colorMatrix, Color.red, 0, 1);
+        DrawPixelAtCursor(ref colorMatrix, Color.red, 0, -1);
+    }
+
+    void DrawCursorStroke(bool pressed)
+    {
+        if (pressed)
+            DrawPixelAtCursor(ref baseMatrix, Color.red);
+    }
+
+    void SetTexture(ref Texture2D tex)
+    {
+        tex.SetPixels(Mat2List(colorMatrix));
+        tex.Apply();
     }
 
     public static void MoveCursor(Vector2 moveVal)
