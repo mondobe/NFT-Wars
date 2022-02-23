@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class CharMove : MonoBehaviour
@@ -10,22 +11,31 @@ public class CharMove : MonoBehaviour
     public float moveSpeed;
     public GameObject visuals;
     Vector2 moveAxis = Vector2.zero;
+    public static UnityEvent interactEvent;
+    public static GameObject player;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-
+        interactEvent = new UnityEvent();
+        player = gameObject;
     }
 
     // Update is called once per frame
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        moveAxis = ctx.ReadValue<Vector2>() * moveSpeed;
+        if(!Easel.showing)
+            moveAxis = ctx.ReadValue<Vector2>() * moveSpeed;
     }
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
         DrawTexture.MoveCursor(ctx.ReadValue<Vector2>());
+    }
+
+    public void OnInteract()
+    {
+        interactEvent.Invoke();
     }
 
     void Update()

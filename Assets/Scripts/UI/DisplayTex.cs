@@ -10,12 +10,12 @@ public class DisplayTex : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        raw.texture = DrawTexture.debug;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        raw.texture = DrawTexture.activeNFT.image;
+        raw.enabled = Easel.showing;
     }
 }
