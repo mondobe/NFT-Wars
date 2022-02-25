@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class DrawTexture : MonoBehaviour
 {
     static Vector2Int cursor;
     static Vector2 floatCursor;
-    public float myCursorMoveSpeed;
     public static float cursorMoveSpeed;
+    public float myCursorMoveSpeed;
     public static bool drawPressed = false;
     public static readonly Vector2Int size = new Vector2Int(200, 200);
+    public static Color activeColor;
+    public static int activeColorIndex;
+    public Image colorPrev;
 
     public static NFT activeNFT;
 
@@ -40,6 +44,7 @@ public class DrawTexture : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         floatCursor = new Vector2(size.x / 2, size.y / 2);
         activeNFT = Easel.sDefaultNFT;
+        activeColorIndex = 0;
     }
 
     // Update is called once per frame
@@ -49,9 +54,17 @@ public class DrawTexture : MonoBehaviour
         //set cursor position
         SetCursorPos();
 
+        activeColor = UnlockedColors.unlocked[activeColorIndex];
+        SetPreviewColor();
+
         //draw at cursor
         if(Easel.showing)
             DrawCursorStroke(drawPressed, activeNFT.baseMatrix);
+    }
+
+    void SetPreviewColor()
+    {
+        colorPrev.color = activeColor;
     }
 
     void SetCursorPos()
@@ -63,7 +76,7 @@ public class DrawTexture : MonoBehaviour
     void DrawCursorStroke(bool pressed, Color[,] matrix)
     {
         if (pressed)
-            DrawPixelAtCursor(ref matrix, Color.red);
+            DrawPixelAtCursor(ref matrix, activeColor);
     }
 
     public static void SetTexture(ref Texture2D tex, Color[,] matrix)
@@ -106,5 +119,19 @@ public class DrawTexture : MonoBehaviour
     public static void DrawPixelAtCursor(ref Color[,] matrix, Color color, int offsetX = 0, int offsetY = 0)
     {
         DrawPixel(ref matrix, cursor + new Vector2Int(offsetX, offsetY), color);
+    }
+
+    public void SwitchColor(int switchBy)
+    {
+        activeColorIndex = (activeColorIndex + UnlockedColors.unlocked.Count + switchBy) % UnlockedColors.unlocked.Count;
+        Debug.Log("Switching " + switchBy);
+    }
+
+    public void OnSwitch(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValue<Vector2>().x > 0.3f)
+            SwitchColor(1);
+        else if (ctx.ReadValue<Vector2>().x < -0.3f)
+            SwitchColor(-1);
     }
 }
