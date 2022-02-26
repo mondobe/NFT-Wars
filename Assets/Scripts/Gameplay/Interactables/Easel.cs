@@ -39,7 +39,8 @@ public class Easel : Interactable
         priceText.enabled = sellPhase;
         sellTimer -= Time.deltaTime;
 
-        currentNFT = DrawTexture.activeNFT.image;
+        if(DrawTexture.activeNFT != null)
+            currentNFT = DrawTexture.activeNFT.image;
 
         sellPrev.texture = currentNFT;
 
@@ -56,7 +57,8 @@ public class Easel : Interactable
             {
                 sellPhase = false;
                 PlayerBalance.money += DrawTexture.soldValue;
-                DrawTexture.ResetNFT();
+                Destroy(DrawTexture.activeNFT);
+                DrawTexture.activeNFT = null;
             }
         }
     }

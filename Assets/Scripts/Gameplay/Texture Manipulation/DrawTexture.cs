@@ -29,6 +29,12 @@ public class DrawTexture : MonoBehaviour
 
     public static bool edited;
 
+    public static bool hideOnRelease;
+    public static StrokeBot currentBot;
+
+    public NFT easelNFT;
+    public static NFT sEaselNFT;
+
     public static Color[] Mat2List(Color[,] matrix)
     {
         Color[] toRet = new Color[size.x * size.y];
@@ -43,7 +49,17 @@ public class DrawTexture : MonoBehaviour
         if (ctx.started)
             drawPressed = true;
         if (ctx.canceled)
+        {
             drawPressed = false;
+            if (hideOnRelease)
+            {
+                Easel.showing = false;
+                hideOnRelease = false;
+                currentBot.UpdateStroke();
+                currentBot = null;
+                activeNFT = sEaselNFT;
+            }
+        }
     }
 
     // Start is called before the first frame update
@@ -60,6 +76,13 @@ public class DrawTexture : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(activeNFT == null)
+        {
+            easelNFT = gameObject.AddComponent<NFT>();
+            activeNFT = easelNFT;
+            sEaselNFT = activeNFT;
+            ResetNFT();
+        }
 
         //set cursor position
         SetCursorPos();

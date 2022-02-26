@@ -20,7 +20,8 @@ public class DisplayTex : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        raw.texture = DrawTexture.activeNFT.image;
+        if(DrawTexture.activeNFT != null)
+            raw.texture = DrawTexture.activeNFT.image;
         raw.enabled = Easel.showing;
         if(colorPrevGO.activeSelf != Easel.showing)
             colorPrevGO.SetActive(Easel.showing);

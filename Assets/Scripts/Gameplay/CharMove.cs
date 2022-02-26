@@ -13,12 +13,17 @@ public class CharMove : MonoBehaviour
     Vector2 moveAxis = Vector2.zero;
     public static UnityEvent interactEvent;
     public static GameObject player;
+    public static bool placing, wiring;
+    public static StrokeBot place;
+    public static Wire wire;
 
     // Start is called before the first frame update
     void Awake()
     {
         interactEvent = new UnityEvent();
         player = gameObject;
+        placing = false;
+        wiring = false;
     }
 
     // Update is called once per frame
@@ -35,8 +40,15 @@ public class CharMove : MonoBehaviour
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
-        if(ctx.started)
-            interactEvent.Invoke();
+        if (!ctx.started)
+            return;
+        if (placing)
+        {
+            place.Place();
+            placing = false;
+            return;
+        }
+        interactEvent.Invoke();
     }
 
     void Update()

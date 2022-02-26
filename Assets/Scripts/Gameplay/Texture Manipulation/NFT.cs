@@ -90,7 +90,7 @@ public class NFT : MonoBehaviour
 
             toRet = (int)Mathf.Pow(toRet, 0.7f);
 
-            if (Random.Range(0f, 1f) < 0.02f)
+            if (Random.Range(0f, 1f) < 0.002f)
                 toRet += Random.Range(-200, 100000);
             toRet += (int)(200 * Mathf.Sqrt(contained.Count) * (maxConRange - minConRange) * Random.Range(0.9f, 1.2f));
 
