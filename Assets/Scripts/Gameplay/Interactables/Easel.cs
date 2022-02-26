@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Easel : Interactable
 {
@@ -11,7 +12,7 @@ public class Easel : Interactable
     public NFT defaultNFT;
     public static NFT sDefaultNFT;
     public static bool sellPhase;
-    public SpriteRenderer sellPrev;
+    public RawImage sellPrev;
     public static float sellTimer;
     public TextMeshProUGUI priceText;
     public static int prospectiveValue;
@@ -38,7 +39,11 @@ public class Easel : Interactable
         priceText.enabled = sellPhase;
         sellTimer -= Time.deltaTime;
 
-        if(sellPhase)
+        currentNFT = DrawTexture.activeNFT.image;
+
+        sellPrev.texture = currentNFT;
+
+        if (sellPhase)
         {
             if (sellTimer > 0)
             {

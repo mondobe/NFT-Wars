@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    public int interactDistance;
+    public float interactDistance;
     public SpriteRenderer[] spriteRenderers;
-    bool close = false;
+    protected bool close = false;
 
     public void Start()
     {

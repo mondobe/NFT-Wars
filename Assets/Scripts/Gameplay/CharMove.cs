@@ -33,9 +33,10 @@ public class CharMove : MonoBehaviour
         DrawTexture.MoveCursor(ctx.ReadValue<Vector2>());
     }
 
-    public void OnInteract()
+    public void OnInteract(InputAction.CallbackContext ctx)
     {
-        interactEvent.Invoke();
+        if(ctx.started)
+            interactEvent.Invoke();
     }
 
     void Update()

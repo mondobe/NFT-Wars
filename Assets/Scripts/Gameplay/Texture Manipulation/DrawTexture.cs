@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -18,6 +19,10 @@ public class DrawTexture : MonoBehaviour
     public static Color activeColor;
     public static int activeColorIndex;
     public Image colorPrev;
+    public TextMeshProUGUI brushPrev;
+
+    public static Brush activeBrush;
+    public static int activeBrushIndex;
 
     public static NFT activeNFT;
     public static int soldValue;
@@ -49,6 +54,7 @@ public class DrawTexture : MonoBehaviour
         floatCursor = new Vector2(size.x / 2, size.y / 2);
         activeNFT = Easel.sDefaultNFT;
         activeColorIndex = 0;
+        activeBrushIndex = 0;
     }
 
     // Update is called once per frame
@@ -59,18 +65,25 @@ public class DrawTexture : MonoBehaviour
         SetCursorPos();
 
         activeColor = UnlockedColors.unlocked[activeColorIndex];
+        activeBrush = UnlockedBrushes.unlocked[activeBrushIndex];
         SetPreviewColor();
+        SetPreviewBrush();
 
         edited = Easel.showing;
 
         //draw at cursor
         if(Easel.showing)
-            DrawCursorStroke(drawPressed, activeNFT.baseMatrix);
+            DrawCursorStroke(drawPressed, ref activeNFT.baseMatrix);
     }
 
     void SetPreviewColor()
     {
         colorPrev.color = activeColor;
+    }
+
+    void SetPreviewBrush()
+    {
+        brushPrev.text = "Brush: " + activeBrush.name;
     }
 
     void SetCursorPos()
@@ -79,10 +92,10 @@ public class DrawTexture : MonoBehaviour
         //Debug.Log("Cursor position is " + cursor + ", floatCursor: " + floatCursor + ", pressed: " + drawPressed);
     }
 
-    void DrawCursorStroke(bool pressed, Color[,] matrix)
+    void DrawCursorStroke(bool pressed, ref Color[,] matrix)
     {
         if (pressed)
-            DrawPixelAtCursor(ref matrix, activeColor);
+            activeBrush.DrawAtCursor(ref matrix);
     }
 
     public static void SetTexture(ref Texture2D tex, Color[,] matrix)
@@ -132,6 +145,11 @@ public class DrawTexture : MonoBehaviour
         activeColorIndex = (activeColorIndex + UnlockedColors.unlocked.Count + switchBy) % UnlockedColors.unlocked.Count;
     }
 
+    public void SwitchBrush(int switchBy)
+    {
+        activeBrushIndex = (activeBrushIndex + UnlockedBrushes.unlocked.Count + switchBy) % UnlockedBrushes.unlocked.Count;
+    }
+
     public void OnSwitch(InputAction.CallbackContext ctx)
     {
         if (!Easel.showing)
@@ -140,6 +158,10 @@ public class DrawTexture : MonoBehaviour
             SwitchColor(1);
         else if (ctx.ReadValue<Vector2>().x < -0.3f)
             SwitchColor(-1);
+        if (ctx.ReadValue<Vector2>().y > 0.3f)
+            SwitchBrush(1);
+        else if (ctx.ReadValue<Vector2>().y < -0.3f)
+            SwitchBrush(-1);
     }
 
     public static void ResetNFT()

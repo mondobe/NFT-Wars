@@ -36,11 +36,8 @@ public class NFT : MonoBehaviour
 
     void DrawCursor()
     {
-        DrawTexture.DrawPixelAtCursor(ref colorMatrix, DrawTexture.activeColor);
-        DrawTexture.DrawPixelAtCursor(ref colorMatrix, DrawTexture.activeColor, 1);
-        DrawTexture.DrawPixelAtCursor(ref colorMatrix, DrawTexture.activeColor, -1);
-        DrawTexture.DrawPixelAtCursor(ref colorMatrix, DrawTexture.activeColor, 0, 1);
-        DrawTexture.DrawPixelAtCursor(ref colorMatrix, DrawTexture.activeColor, 0, -1);
+        if(DrawTexture.activeBrush != null)
+            DrawTexture.activeBrush.DrawAtCursor(ref colorMatrix);
     }
 
     public void UpdateColorMatrix()
