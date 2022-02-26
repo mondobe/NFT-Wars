@@ -14,11 +14,15 @@ public class DrawTexture : MonoBehaviour
     public float myCursorMoveSpeed;
     public static bool drawPressed = false;
     public static readonly Vector2Int size = new Vector2Int(200, 200);
+
     public static Color activeColor;
     public static int activeColorIndex;
     public Image colorPrev;
 
     public static NFT activeNFT;
+    public static int soldValue;
+
+    public static bool edited;
 
     public static Color[] Mat2List(Color[,] matrix)
     {
@@ -56,6 +60,8 @@ public class DrawTexture : MonoBehaviour
 
         activeColor = UnlockedColors.unlocked[activeColorIndex];
         SetPreviewColor();
+
+        edited = Easel.showing;
 
         //draw at cursor
         if(Easel.showing)
@@ -124,14 +130,35 @@ public class DrawTexture : MonoBehaviour
     public void SwitchColor(int switchBy)
     {
         activeColorIndex = (activeColorIndex + UnlockedColors.unlocked.Count + switchBy) % UnlockedColors.unlocked.Count;
-        Debug.Log("Switching " + switchBy);
     }
 
     public void OnSwitch(InputAction.CallbackContext ctx)
     {
+        if (!Easel.showing)
+            return;
         if (ctx.ReadValue<Vector2>().x > 0.3f)
             SwitchColor(1);
         else if (ctx.ReadValue<Vector2>().x < -0.3f)
             SwitchColor(-1);
+    }
+
+    public static void ResetNFT()
+    {
+        activeNFT.ResetMatrices();
+    }
+
+    public void OnInteract(InputAction.CallbackContext ctx)
+    {
+        Debug.Log("edited: " + edited + ", ctx.started:" + ctx.started);
+        if (!edited || !ctx.started)
+        {
+            return;
+        }
+        soldValue = activeNFT.value;
+        Debug.Log("Selling for " + soldValue);
+        Easel.showing = false;
+        Easel.sellPhase = true;
+        Easel.sellTimer = 5f;
+        edited = false;
     }
 }

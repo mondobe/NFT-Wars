@@ -17,9 +17,9 @@
                     "name": "Switch",
                     "type": "Value",
                     "id": "b10b7b05-b127-45db-a336-18fc492af6e4",
-                    "expectedControlType": "Vector2",
-                    "processors": "NormalizeVector2",
-                    "interactions": "Press"
+                    "expectedControlType": "Digital",
+                    "processors": "",
+                    "interactions": "Tap"
                 },
                 {
                     "name": "Look",
@@ -51,7 +51,7 @@
                     "id": "d5179bad-91e3-4d4c-ac4c-1600b84771b0",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 }
             ],
             "bindings": [
