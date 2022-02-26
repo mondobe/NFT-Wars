@@ -11,4 +11,10 @@ public class PlayerBalance : MonoBehaviour
     {
         money = startingMoney;
     }
+
+    public void Update()
+    {
+        if (money > StaticStats.maxMoney)
+            StaticStats.maxMoney = money;
+    }
 }
